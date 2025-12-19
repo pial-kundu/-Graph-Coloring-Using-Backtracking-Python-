@@ -1,0 +1,49 @@
+def is_safe(node, graph, colors, color):
+    for neighbor in graph[node]:
+        if colors[neighbor] == color:
+            return False
+    return True
+
+
+def graph_coloring_util(node, graph, colors, n, k):
+    if node == n:
+        return True
+
+    for color in range(1, k + 1):
+        if is_safe(node, graph, colors, color):
+            colors[node] = color
+            if graph_coloring_util(node + 1, graph, colors, n, k):
+                return True
+            colors[node] = 0  # Backtrack
+
+    return False
+
+
+def graph_coloring(n, edges, k):
+    graph = {i: [] for i in range(n)}
+    for u, v in edges:
+        graph[u].append(v)
+        graph[v].append(u)
+
+    colors = [0] * n
+
+    if graph_coloring_util(0, graph, colors, n, k):
+        print(f"Coloring Possible with {k} Colors")
+        print("Color Assignment:", colors)
+    else:
+        print(f"Coloring Not Possible with {k} Colors")
+
+
+# -------- FILE INPUT SECTION --------
+file = open("input.txt", "r")
+
+n, m, k = map(int, file.readline().split())
+edges = []
+
+for _ in range(m):
+    u, v = map(int, file.readline().split())
+    edges.append((u, v))
+
+file.close()
+
+graph_coloring(n, edges, k)
